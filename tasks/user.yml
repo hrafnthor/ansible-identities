@@ -1,0 +1,102 @@
+# -----------------------------------------------------------------------------
+# This file contains task related to managing users.
+#
+# It expects to be iterated over with a input variable named 'user'
+# -----------------------------------------------------------------------------
+
+- name: identities | users | create user group
+  ansible.builtin.group:
+    name: "{{ user.group.name }}"
+    gid: "{{ user.group.id | default(omit) }}"
+    state: present
+  when:
+    - user.group is defined
+    - user.state is not defined or user.state == 'present'
+
+- name: identities | users | manage user
+  ansible.builtin.user:
+    name: "{{ user.name }}"
+    uid: "{{ user.id | default(omit) }}"
+    group: "{{ user.group.name | default(omit) }}"
+    groups: "{{ user.groups | default(omit) }}"
+    comment: "{{ user.comment | default(user.name) }}"
+    password: "{{ user.password.value | default('!') }}"
+    update_password: "{{ user.password.policy | default(omit) }}"
+    shell: "{{ user.shell | default('/bin/bash') }}"
+    create_home: "{{ true if (user.home.state | default('present')) == 'present' else false }}"
+    state: "{{ user.state | default('present') }}"
+
+- name: identities | users | remove user homedir
+  ansible.builtin.file:
+    path: /home/{{ user.name }}
+    state: absent
+  when:
+    - (user.state is defined and user.state == 'absent') or (user.home.state is defined and user.home.state == 'absent')
+
+- name: identities | users | manage user homedir
+  ansible.builtin.file:
+    path: /home/{{ user.name }}
+    state: directory
+    mode: "{{ user.home.mode }}"
+  when:
+    - user.state is not defined or user.state == 'present'
+    - user.home is defined
+    - user.home.mode is defined
+
+- name: identites | users | remove sudoer file
+  ansible.builtin.file:
+    path: "/etc/sudoers.d/{{ user.name }}"
+    state: absent
+    modification_time: preserve
+    access_time: preserve
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+    - (user.state is defined and user.state == 'absent') or (user.sudoer.state is defined and user.sudoer.state == 'absent')
+
+- name: identities | users | set sudoer privileges
+  ansible.builtin.lineinfile:
+    path: "/etc/sudoers.d/{{ user.name }}"
+    regexp: "^{{ user.name }}"
+    line: "{{ user.name }} {{ user.sudoer.privileges }}"
+    owner: root
+    group: root
+    mode: '0644'
+    create: yes
+  when:
+    - user.state is not defined or user.state == 'present'
+    - user.sudoer is defined
+    - user.sudoer.state is not defined or user.sudoer.state == 'present'
+    - user.sudoer.privileges is defined
+
+- name: identities | users | copy sudoer file
+  ansible.builtin.copy:
+    src: "{{ user.sudoer.file }}"
+    dest: "/etc/sudoers.d/{{ user.name }}"
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+    - user.state is not defined or user.state == 'present'
+    - user.sudoer is defined
+    - user.sudoer.state is not defined or user.sudoer.state == 'present'
+    - user.sudoer.file is defined
+
+- name: system | user | authorize ssh key
+  ansible.builtin.lineinfile:
+    state: "{{ entry.state | default('present') }}"
+    path: "/home/{{ user.name }}/.ssh/authorized_keys"
+    regexp: "^{{ entry.key }}"
+    line: "{{ entry.key }}"
+    owner: "{{ user.name }}"
+    group: "{{ user.group.name | default(user.name) }}"
+    mode: "0644"
+    create: true
+  loop: "{{ user.ssh.authorized_keys }}"
+  loop_control:
+    loop_var: entry
+  when: 
+    - user.state is not defined or user.state == 'present'
+    - user.ssh is defined
+    - user.ssh.authorized_keys is defined

@@ -1,0 +1,246 @@
+{
+    "title": "identities",
+    "description": "",
+    "type": "object",
+    "properties":
+    {
+        "root":
+        {
+            "type": "object",
+            "properties":
+            {
+                "login":
+                {
+                    "type": "boolean"
+                }
+            }
+        },
+        "groups":
+        {
+            "type": "array",
+            "items":
+            {
+                "type": "object",
+                "properties":
+                {
+                    "id":
+                    {
+                        "ref": "#/definitions/non-empty-integer"
+                    },
+                    "name":
+                    {
+                        "ref": "#/definitions/non-empty-string"
+                    },
+                    "state":
+                    {
+                        "ref": "#/definitions/non-empty-string",
+                        "enum":
+                        [
+                            "present",
+                            "absent"
+                        ]
+                    }
+                },
+                "required":
+                [
+                    "name"
+                ]
+            }
+        },
+        "users":
+        {
+            "type": "array",
+            "items":
+            {
+                "type": "object",
+                "properties":
+                {
+                    "id":
+                    {
+                        "ref": "#/definitions/non-empty-integer"
+                    },
+                    "name":
+                    {
+                        "ref": "#/definitions/non-empty-string"
+                    },
+                    "comment":
+                    {
+                        "ref": "#/definitions/non-empty-string"
+                    },
+                    "password":
+                    {
+                        "type": "object",
+                        "properties":
+                        {
+                            "value":
+                            {
+                                "ref": "#/definitions/non-empty-string"
+                            },
+                            "policy":
+                            {
+                                "type": "string",
+                                "enum":
+                                [
+                                    "always",
+                                    "on_create"
+                                ]
+                            }
+                        }
+                    },
+                    "group":
+                    {
+                        "type": "object",
+                        "properties":
+                        {
+                            "id":
+                            {
+                                "ref": "#/definitions/non-empty-integer"
+                            },
+                            "name":
+                            {
+                                "ref": "#/definitions/non-empty-string"
+                            }
+                        },
+                        "required":
+                        [
+                            "name"
+                        ]
+                    },
+                    "groups":
+                    {
+                        "ref": "#/definitions/non-empty-string-array"
+                    },
+                    "shell":
+                    {
+                        "ref": "#/definitions/non-empty-string"
+                    },
+                    "home":
+                    {
+                        "type": "object",
+                        "properties":
+                        {
+                            "state":
+                            {
+                                "type": "string",
+                                "enum":
+                                [
+                                    "absent",
+                                    "present"
+                                ]
+                            },
+                            "mode":
+                            {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "state":
+                    {
+                        "type": "string",
+                        "enum":
+                        [
+                            "absent",
+                            "present"
+                        ]
+                    },
+                    "sudoer":
+                    {
+                        "type": "object",
+                        "properties":
+                        {
+                            "state":
+                            {
+                                "type": "string",
+                                "enum":
+                                [
+                                    "absent",
+                                    "present"
+                                ]
+                            },
+                            "privileges":
+                            {
+                                "ref": "#/definitions/non-empty-string"
+                            },
+                            "file":
+                            {
+                                "ref": "#/definitions/non-empty-string"
+                            }
+                        },
+                        "oneOf":
+                        [
+                            {
+                                "required":
+                                [
+                                    "privileges"
+                                ]
+                            },
+                            {
+                                "required":
+                                [
+                                    "file"
+                                ]
+                            }
+                        ]
+                    },
+                    "ssh":
+                    {
+                        "type": "object",
+                        "properties":
+                        {
+                            "authorized":
+                            {
+                                "type": "array",
+                                "items":
+                                {
+                                    "type": "object",
+                                    "properties":
+                                    {
+                                        "key":
+                                        {
+                                            "ref": "#/definitions/non-empty-string"
+                                        },
+                                        "state":
+                                        {
+                                            "type": "string",
+                                            "enum":
+                                            [
+                                                "absent",
+                                                "present"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "required":
+                [
+                    "name"
+                ]
+            }
+        }
+    },
+    "definitions":
+    {
+        "non-empty-integer":
+        {
+            "type": "integer",
+            "minLength": 1
+        },
+        "non-empty-string":
+        {
+            "type": "string",
+            "minLength": 1
+        },
+        "non-empty-string-array":
+        {
+            "type": "array",
+            "minItems": 1,
+            "items":
+            {
+                "$ref": "#/definitions/non-empty-string"
+            }
+        }
+    }
+}

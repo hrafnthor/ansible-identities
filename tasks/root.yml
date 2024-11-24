@@ -1,0 +1,10 @@
+# This file contains tasks related to modifying the root user
+
+- name: identities | root | disable root login
+  become: true
+  ansible.builtin.user:
+    shell: /usr/sbin/nologin
+    name: root
+  when:
+    - users.root is defined
+    - users.root.login == false
