@@ -1,0 +1,19 @@
+galaxy_info:
+  author: Hrafn Thorvaldsson
+  description: A role for creating users on a system.
+  company: hth
+
+  license: MIT
+
+  min_ansible_version: "2.1"
+  
+  platforms:
+    - name: Ubuntu
+      versions:
+      - "24.04"
+      - "22.04"
+
+  galaxy_tags: 
+    - linux
+
+dependencies: []
