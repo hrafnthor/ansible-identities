@@ -1,4 +1,4 @@
-## Ansible Users
+## Ansible Identities
 
 An Ansible role for creating users, groups and doing various modifications related to them.
 
