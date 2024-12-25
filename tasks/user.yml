@@ -4,7 +4,7 @@
 # It expects to be iterated over with a input variable named 'user'
 # -----------------------------------------------------------------------------
 
-- name: identities | users | create user group
+- name: "identities | users | create user group"
   ansible.builtin.group:
     name: "{{ user.group.name }}"
     gid: "{{ user.group.id | default(omit) }}"
@@ -13,7 +13,7 @@
     - user.group is defined
     - user.state is not defined or user.state == 'present'
 
-- name: identities | users | manage user
+- name: "identities | users | manage user"
   ansible.builtin.user:
     name: "{{ user.name }}"
     uid: "{{ user.id | default(omit) }}"
@@ -26,14 +26,14 @@
     create_home: "{{ true if (user.home.state | default('present')) == 'present' else false }}"
     state: "{{ user.state | default('present') }}"
 
-- name: identities | users | remove user homedir
+- name: "identities | users | remove user homedir"
   ansible.builtin.file:
     path: /home/{{ user.name }}
     state: absent
   when:
     - (user.state is defined and user.state == 'absent') or (user.home.state is defined and user.home.state == 'absent')
 
-- name: identities | users | manage user homedir
+- name: "identities | users | manage user homedir"
   ansible.builtin.file:
     path: /home/{{ user.name }}
     state: directory
@@ -43,7 +43,7 @@
     - user.home is defined
     - user.home.mode is defined
 
-- name: identites | users | remove sudoer file
+- name: "identites | users | remove sudoer file"
   ansible.builtin.file:
     path: "/etc/sudoers.d/{{ user.name }}"
     state: absent
@@ -55,7 +55,7 @@
   when:
     - (user.state is defined and user.state == 'absent') or (user.sudoer.state is defined and user.sudoer.state == 'absent')
 
-- name: identities | users | set sudoer privileges
+- name: "identities | users | set sudoer privileges"
   ansible.builtin.lineinfile:
     path: "/etc/sudoers.d/{{ user.name }}"
     regexp: "^{{ user.name }}"
@@ -70,7 +70,7 @@
     - user.sudoer.state is not defined or user.sudoer.state == 'present'
     - user.sudoer.privileges is defined
 
-- name: identities | users | copy sudoer file
+- name: "identities | users | copy sudoer file"
   ansible.builtin.copy:
     src: "{{ user.sudoer.file }}"
     dest: "/etc/sudoers.d/{{ user.name }}"
@@ -83,7 +83,15 @@
     - user.sudoer.state is not defined or user.sudoer.state == 'present'
     - user.sudoer.file is defined
 
-- name: system | user | authorize ssh key
+- name: "identities | users | create .ssh directory"
+  ansible.builtin.file:
+    path: "/home/{{ user.name }}/.ssh"
+    state: directory
+    owner: "{{ user.name }}"
+    group: "{{ user.group.name | default(user.name) }}"
+    mode: '0744'
+
+- name: "identities | users | add authorized key"
   ansible.builtin.lineinfile:
     state: "{{ entry.state | default('present') }}"
     path: "/home/{{ user.name }}/.ssh/authorized_keys"
