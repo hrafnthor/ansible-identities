@@ -74,7 +74,11 @@
                         {
                             "value":
                             {
-                                "ref": "#/definitions/non-empty-string"
+                                "$ref": "#/definitions/non-empty-string"
+                            },
+                            "variable":
+                            {
+                                "$ref": "#/definitions/non-empty-string"
                             },
                             "policy":
                             {

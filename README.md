@@ -19,7 +19,8 @@ identities:
     name: String			<required if users array is defined and has values>
     comment: String
     password:
-      value: String
+      value: String   The direct value to set the password to. See password section below for more.
+      variable: String  The Ansible run variable to read the password from. See password section below for more.
       policy: [ 
         always				<sets the value as password each time>
         on_create 			<only sets the value as password when creating user>
@@ -55,6 +56,10 @@ identities:
           ]
 ```
 
+##### Password
+
+When setting the password for a user, it is possible to include the password directly in the `value` field or by using the `variable` field to look it up form variables in the Ansible run. This can be beneficial when not wanting to expose password hashes directly in the playbook, and rather have the value be read into a variable (for instance from a Vault) at runtime. If neither `variable` nor `value` is present, the user will receive a password (i.e '!') and not be able to log in.
+
 #### Example:
 
 ```yaml
@@ -67,6 +72,10 @@ identities:
     state: absent
   - name: vanir
   users:
+  - id: 6666
+    name: Loki
+    password:
+      variable: super_secret_password
   - id: 7777
     name: Freyja
     comment: "Godess of home and hearth"

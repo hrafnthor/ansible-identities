@@ -20,7 +20,7 @@
     group: "{{ user.group.name | default(omit) }}"
     groups: "{{ user.groups | default(omit) }}"
     comment: "{{ user.comment | default(user.name) }}"
-    password: "{{ user.password.value | default('!') }}"
+    password: "{{ user.password.value if (user.password.value is defined) else (lookup('vars', user.password.variable) if user.password.variable is defined else '!') }}"
     update_password: "{{ user.password.policy | default(omit) }}"
     shell: "{{ user.shell | default('/bin/bash') }}"
     create_home: "{{ true if (user.home.state | default('present')) == 'present' else false }}"
