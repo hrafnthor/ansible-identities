@@ -134,7 +134,46 @@
                             },
                             "mode":
                             {
-                                "type": "string"
+                                "ref": "#/definitions/non-empty-string"
+                            },
+                            "dirs":
+                            {
+                                "type": "array",
+                                "items":
+                                {
+                                    "type": "object",
+                                    "properties":
+                                    {
+                                        "path":
+                                        {
+                                            "anyOf":
+                                            [
+                                                {
+                                                    "ref": "#/definitions/non-empty-string"
+                                                },
+                                                {
+                                                    "ref": "#/definitions/non-empty-string-array"
+                                                }
+                                            ]
+                                        },
+                                        "remove":
+                                        {
+                                            "type": "boolean"
+                                        },
+                                        "force":
+                                        {
+                                            "type": "boolean"
+                                        },
+                                        "mode":
+                                        {
+                                            "ref": "#/definitions/non-empty-string"
+                                        }
+                                    },
+                                    "required":
+                                    [
+                                        "path"
+                                    ]
+                                }
                             }
                         }
                     },

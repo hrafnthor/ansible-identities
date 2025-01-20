@@ -1,4 +1,4 @@
-- name: identities | assertion | run assertions
+- name: "identities | assertion | run assertions"
   ansible.utils.validate:
     data: "{{ identities }}"
     criteria: "{{ lookup('file', 'assertions/criteria/identities-criteria.json') | from_json }}"
@@ -8,7 +8,7 @@
   when:
     - identities is defined
 
-- name: identities | groups | modify groups
+- name: "identities | groups | modify groups"
   ansible.builtin.group:
     name: "{{ group.name }}"
     gid: "{{ group.id | default(omit) }}"
@@ -20,7 +20,7 @@
     - identities is defined
     - identities.groups is defined
 
-- name: identities | users | modify users
+- name: "identities | users | modify users"
   ansible.builtin.include_tasks: user.yml
   loop: "{{ identities.users }}"
   loop_control:
@@ -29,7 +29,7 @@
     - identities is defined
     - identities.users is defined
 
-- name: identities | root
+- name: "identities | root"
   ansible.builtin.include_tasks: root.yml
   when:
     - identities is defined

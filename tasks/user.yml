@@ -83,15 +83,39 @@
     - user.sudoer.state is not defined or user.sudoer.state == 'present'
     - user.sudoer.file is defined
 
+
+- name: "identities | users | create home dir path"
+  block:
+    - ansible.builtin.include_tasks: dir.yml
+      loop: "{{ user.home.dirs }}"
+      loop_control:
+        loop_var: "dir"
+  vars:
+      path_prefix: "/home/{{ user.name }}/"
+      owner: "{{ user.name }}"
+      group: "{{ user.group.name | default(user.name) }}"
+
+- name: "identities | users | check for .ssh directory"
+  ansible.builtin.stat:
+    path: "/home/{{ user.name }}/.ssh"
+  register: ssh_dir
+  when:
+    - user.ssh is defined
+
+
 - name: "identities | users | create .ssh directory"
   ansible.builtin.file:
     path: "/home/{{ user.name }}/.ssh"
     state: directory
     owner: "{{ user.name }}"
     group: "{{ user.group.name | default(user.name) }}"
-    mode: '0744'
+    mode: '0755'
+  when:
+    - user.ssh is defined
+    - not ssh_dir.stat.exists
 
-- name: "identities | users | add authorized key"
+
+- name: "identities | users | add ssh authorized keys"
   ansible.builtin.lineinfile:
     state: "{{ entry.state | default('present') }}"
     path: "/home/{{ user.name }}/.ssh/authorized_keys"

@@ -1,0 +1,26 @@
+# This file contains tasks related to manage paths. It expects to be iterated upon with
+# an object named 'dir' containing details about the directory being created.
+#
+# It also expects to have the following variables:
+#
+# 'path_prefix': prefix path to add to the directory path being created
+#
+# 'owner': The user who will own the directory
+#
+# 'group': The group that will own the directory
+
+
+- name: "identities | path | manage path"
+  ansible.builtin.file:
+    path: "{{ path_prefix }}{{ path }}"
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+    mode: "{{ dir.mode | default('0755') }}"
+    state: "{{ 'absent' if (dir.remove | default(false)) else 'directory' }}"
+    force: "{{ dir.force | default(false) }}"
+    recurse: "{{ false if (dir.remove | default(false)) else true }}"
+    access_time: preserve
+    modification_time: preserve
+  loop: "{{ dir.path if (dir.path is iterable and dir.path is not string) else [dir.path] }}"
+  loop_control:
+    loop_var: "path"
