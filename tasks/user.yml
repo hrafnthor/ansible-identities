@@ -95,6 +95,7 @@
       owner: "{{ user.name }}"
       group: "{{ user.group.name | default(user.name) }}"
 
+
 - name: "identities | users | check for .ssh directory"
   ansible.builtin.stat:
     path: "/home/{{ user.name }}/.ssh"
@@ -132,3 +133,15 @@
     - user.state is not defined or user.state == 'present'
     - user.ssh is defined
     - user.ssh.authorized_keys is defined
+
+
+- name: "identities | users | copy files"
+  block:
+    - ansible.builtin.include_tasks: files.yml
+      loop: "{{ user.home.files }}"
+      loop_control:
+        loop_var: "file"
+  vars:
+      path_prefix: "/home/{{ user.name }}/"
+      owner: "{{ user.name }}"
+      group: "{{ user.group.name | default(user.name) }}"

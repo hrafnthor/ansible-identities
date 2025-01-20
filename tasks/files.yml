@@ -1,0 +1,19 @@
+- name: "identities | files | copy over file"
+  ansible.builtin.copy:
+    src: "{{ file.source }}"
+    dest: "{{ path_prefix }}{{ file.path }}"
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+    mode: "{{ file.mode | default('0644') }}"
+    force: "{{ file.force | default(false) }}"
+    backup: "{{ file.backup | default(false) }}"
+  when:
+    - file.remove is undefined or not file.remove 
+
+- name: "identities | files | remove file"
+  ansible.builtin.file:
+    path: "{{ path_prefix }}{{ file.path }}"
+    state: absent
+  when:
+    - file.remove is defined
+    - file.remove
