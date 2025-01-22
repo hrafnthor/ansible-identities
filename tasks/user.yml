@@ -135,8 +135,7 @@
     - user.ssh.authorized_keys is defined
 
 
-- name: "identities | users | copy files"
-  block:
+- block:
     - ansible.builtin.include_tasks: files.yml
       loop: "{{ user.home.files }}"
       loop_control:
@@ -145,3 +144,20 @@
       path_prefix: "/home/{{ user.name }}/"
       owner: "{{ user.name }}"
       group: "{{ user.group.name | default(user.name) }}"
+  when:
+    - user.home is defined
+    - user.home.files is defined
+
+
+- block:
+    - ansible.builtin.include_tasks: templates.yml
+      loop: "{{ user.home.templates }}"
+      loop_control:
+          loop_var: "template"
+  vars:
+      path_prefix: "/home/{{ user.name }}/"
+      owner: "{{ user.name }}"
+      group: "{{ user.group.name | default(user.name) }}"
+  when:
+    - user.home is defined
+    - user.home.templates is defined

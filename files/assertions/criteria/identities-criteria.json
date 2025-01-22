@@ -226,6 +226,67 @@
                                         }
                                     ]
                                 }
+                            },
+                            "templates":
+                            {
+                                "type": "array",
+                                "items":
+                                {
+                                    "type": "object",
+                                    "properties":
+                                    {
+                                        "source":
+                                        {
+                                            "ref": "#/definitions/non-empty-string"
+                                        },
+                                        "path":
+                                        {
+                                            "ref": "#/definitions/non-empty-string"
+                                        },
+                                        "force":
+                                        {
+                                            "type": "boolean"
+                                        },
+                                        "backup":
+                                        {
+                                            "type": "boolean"
+                                        },
+                                        "mode":
+                                        {
+                                            "ref": "#/definitions/non-empty-string"
+                                        },
+                                        "vars":
+                                        {
+                                            "type": "object",
+                                            "additionalProperties":
+                                            {
+                                                "type":
+                                                [
+                                                    "string",
+                                                    "number",
+                                                    "boolean"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "oneOf":
+                                    [
+                                        {
+                                            "required":
+                                            [
+                                                "source",
+                                                "path"
+                                            ]
+                                        },
+                                        {
+                                            "required":
+                                            [
+                                                "path",
+                                                "remove"
+                                            ]
+                                        }
+                                    ]
+                                }
                             }
                         }
                     },
