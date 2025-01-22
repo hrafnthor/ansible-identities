@@ -1,0 +1,17 @@
+- name: "identities | templates | set template vars"
+  ansible.builtin.set_fact:
+    "{{ entry.key }}": "{{ entry.value }}"
+  loop: "{{ template.vars | default({}) | dict2items }}"
+  loop_control:
+    loop_var: entry
+
+
+- name: "identities | templates | template file"
+  ansible.builtin.template:
+    src: "{{ template.source }}"
+    dest: "{{ path_prefix }}{{ template.path }}"
+    owner: "{{ user.name }}"
+    group: "{{ user.group.name | default(user.name) }}"
+    mode: "{{ template.mode | default('0644') }}"
+    force: "{{ template.force | default(false) }}"
+    backup: "{{ template.backup | default(false) }}"

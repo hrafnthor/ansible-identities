@@ -20,7 +20,7 @@
     group: "{{ user.group.name | default(omit) }}"
     groups: "{{ user.groups | default(omit) }}"
     comment: "{{ user.comment | default(user.name) }}"
-    password: "{{ user.password.value | default('!') }}"
+    password: "{{ user.password.value if (user.password.value is defined) else (lookup('vars', user.password.variable) if user.password.variable is defined else '!') }}"
     update_password: "{{ user.password.policy | default(omit) }}"
     shell: "{{ user.shell | default('/bin/bash') }}"
     create_home: "{{ true if (user.home.state | default('present')) == 'present' else false }}"
@@ -83,15 +83,40 @@
     - user.sudoer.state is not defined or user.sudoer.state == 'present'
     - user.sudoer.file is defined
 
+
+- name: "identities | users | create home dir path"
+  block:
+    - ansible.builtin.include_tasks: dir.yml
+      loop: "{{ user.home.dirs }}"
+      loop_control:
+        loop_var: "dir"
+  vars:
+      path_prefix: "/home/{{ user.name }}/"
+      owner: "{{ user.name }}"
+      group: "{{ user.group.name | default(user.name) }}"
+
+
+- name: "identities | users | check for .ssh directory"
+  ansible.builtin.stat:
+    path: "/home/{{ user.name }}/.ssh"
+  register: ssh_dir
+  when:
+    - user.ssh is defined
+
+
 - name: "identities | users | create .ssh directory"
   ansible.builtin.file:
     path: "/home/{{ user.name }}/.ssh"
     state: directory
     owner: "{{ user.name }}"
     group: "{{ user.group.name | default(user.name) }}"
-    mode: '0744'
+    mode: '0755'
+  when:
+    - user.ssh is defined
+    - not ssh_dir.stat.exists
 
-- name: "identities | users | add authorized key"
+
+- name: "identities | users | add ssh authorized keys"
   ansible.builtin.lineinfile:
     state: "{{ entry.state | default('present') }}"
     path: "/home/{{ user.name }}/.ssh/authorized_keys"
@@ -108,3 +133,31 @@
     - user.state is not defined or user.state == 'present'
     - user.ssh is defined
     - user.ssh.authorized_keys is defined
+
+
+- block:
+    - ansible.builtin.include_tasks: files.yml
+      loop: "{{ user.home.files }}"
+      loop_control:
+        loop_var: "file"
+  vars:
+      path_prefix: "/home/{{ user.name }}/"
+      owner: "{{ user.name }}"
+      group: "{{ user.group.name | default(user.name) }}"
+  when:
+    - user.home is defined
+    - user.home.files is defined
+
+
+- block:
+    - ansible.builtin.include_tasks: templates.yml
+      loop: "{{ user.home.templates }}"
+      loop_control:
+          loop_var: "template"
+  vars:
+      path_prefix: "/home/{{ user.name }}/"
+      owner: "{{ user.name }}"
+      group: "{{ user.group.name | default(user.name) }}"
+  when:
+    - user.home is defined
+    - user.home.templates is defined

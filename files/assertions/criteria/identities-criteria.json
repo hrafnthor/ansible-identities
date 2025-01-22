@@ -74,7 +74,11 @@
                         {
                             "value":
                             {
-                                "ref": "#/definitions/non-empty-string"
+                                "$ref": "#/definitions/non-empty-string"
+                            },
+                            "variable":
+                            {
+                                "$ref": "#/definitions/non-empty-string"
                             },
                             "policy":
                             {
@@ -130,7 +134,159 @@
                             },
                             "mode":
                             {
-                                "type": "string"
+                                "ref": "#/definitions/non-empty-string"
+                            },
+                            "dirs":
+                            {
+                                "type": "array",
+                                "items":
+                                {
+                                    "type": "object",
+                                    "properties":
+                                    {
+                                        "path":
+                                        {
+                                            "anyOf":
+                                            [
+                                                {
+                                                    "ref": "#/definitions/non-empty-string"
+                                                },
+                                                {
+                                                    "ref": "#/definitions/non-empty-string-array"
+                                                }
+                                            ]
+                                        },
+                                        "remove":
+                                        {
+                                            "type": "boolean"
+                                        },
+                                        "force":
+                                        {
+                                            "type": "boolean"
+                                        },
+                                        "mode":
+                                        {
+                                            "ref": "#/definitions/non-empty-string"
+                                        }
+                                    },
+                                    "required":
+                                    [
+                                        "path"
+                                    ]
+                                }
+                            },
+                            "files":
+                            {
+                                "type": "array",
+                                "items":
+                                {
+                                    "type": "object",
+                                    "properties":
+                                    {
+                                        "source":
+                                        {
+                                            "ref": "#/definitions/non-empty-string"
+                                        },
+                                        "path":
+                                        {
+                                            "ref": "#/definitions/non-empty-string"
+                                        },
+                                        "remove":
+                                        {
+                                            "type": "boolean"
+                                        },
+                                        "force":
+                                        {
+                                            "type": "boolean"
+                                        },
+                                        "backup":
+                                        {
+                                            "type": "boolean"
+                                        },
+                                        "mode":
+                                        {
+                                            "ref": "#/definitions/non-empty-string"
+                                        }
+                                    },
+                                    "oneOf":
+                                    [
+                                        {
+                                            "required":
+                                            [
+                                                "source",
+                                                "path"
+                                            ]
+                                        },
+                                        {
+                                            "required":
+                                            [
+                                                "path",
+                                                "remove"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            },
+                            "templates":
+                            {
+                                "type": "array",
+                                "items":
+                                {
+                                    "type": "object",
+                                    "properties":
+                                    {
+                                        "source":
+                                        {
+                                            "ref": "#/definitions/non-empty-string"
+                                        },
+                                        "path":
+                                        {
+                                            "ref": "#/definitions/non-empty-string"
+                                        },
+                                        "force":
+                                        {
+                                            "type": "boolean"
+                                        },
+                                        "backup":
+                                        {
+                                            "type": "boolean"
+                                        },
+                                        "mode":
+                                        {
+                                            "ref": "#/definitions/non-empty-string"
+                                        },
+                                        "vars":
+                                        {
+                                            "type": "object",
+                                            "additionalProperties":
+                                            {
+                                                "type":
+                                                [
+                                                    "string",
+                                                    "number",
+                                                    "boolean"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "oneOf":
+                                    [
+                                        {
+                                            "required":
+                                            [
+                                                "source",
+                                                "path"
+                                            ]
+                                        },
+                                        {
+                                            "required":
+                                            [
+                                                "path",
+                                                "remove"
+                                            ]
+                                        }
+                                    ]
+                                }
                             }
                         }
                     },
