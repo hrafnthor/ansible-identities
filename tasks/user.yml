@@ -90,6 +90,9 @@
       loop: "{{ user.home.dirs }}"
       loop_control:
         loop_var: "dir"
+      when:
+        - user.home is defined
+        - user.home.dirs is defined
   vars:
       path_prefix: "/home/{{ user.name }}/"
       owner: "{{ user.name }}"
