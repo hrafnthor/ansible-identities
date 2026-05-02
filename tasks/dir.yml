@@ -18,7 +18,7 @@
     mode: "{{ dir.mode | default('0755') }}"
     state: "{{ 'absent' if (dir.remove | default(false)) else 'directory' }}"
     force: "{{ dir.force | default(false) }}"
-    recurse: "{{ false if (dir.remove | default(false)) else true }}"
+    recurse: "{{ true if (dir.recurse | default(false)) else false }}"
     access_time: preserve
     modification_time: preserve
   loop: "{{ dir.path if (dir.path is iterable and dir.path is not string) else [dir.path] }}"
