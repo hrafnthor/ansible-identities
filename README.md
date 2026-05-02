@@ -21,7 +21,7 @@ identities:
     password:
       value: String   The direct value to set the password to. See password section below for more.
       variable: String  The Ansible run variable to read the password from. See password section below for more.
-      policy: [ 
+      policy: [
         always        <sets the value as password each time>
         on_create     <only sets the value as password when creating user>
       ]
@@ -40,6 +40,7 @@ identities:
         - path: string/array    [required] Either a singular value or an array, representing the dir path in relation to the user's home directory to where the directory should be created.
           remove: bool    Indicates if the path should be removed. Default false.
           force: bool     Indicates if the path should be forcefully modified if it already exists. Default false.
+          recurse: bool   Indicates if the path operation should be recursively done. Default false.
           mode: string    The access control to set on the directory. Default '0755'.
       files:
         - source: string  [required] The path to the source file to copy over.
