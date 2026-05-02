@@ -166,7 +166,7 @@
                                         },
                                         "recurse": {
                                             "description": "Indicates if the directory operation should be recursive. Defaults to false.",
-                                            "type": "boolean",
+                                            "type": "boolean"
                                         },
                                         "mode":
                                         {
