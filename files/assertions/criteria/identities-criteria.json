@@ -164,7 +164,8 @@
                                         {
                                             "type": "boolean"
                                         },
-                                        "recurse": {
+                                        "recurse":
+                                        {
                                             "description": "Indicates if the directory operation should be recursive. Defaults to false.",
                                             "type": "boolean"
                                         },
@@ -212,22 +213,9 @@
                                             "ref": "#/definitions/non-empty-string"
                                         }
                                     },
-                                    "oneOf":
+                                    "required":
                                     [
-                                        {
-                                            "required":
-                                            [
-                                                "source",
-                                                "path"
-                                            ]
-                                        },
-                                        {
-                                            "required":
-                                            [
-                                                "path",
-                                                "remove"
-                                            ]
-                                        }
+                                        "path"
                                     ]
                                 }
                             },

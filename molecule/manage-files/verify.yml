@@ -1,0 +1,94 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+
+    - name: Lookup new file creation
+      stat:
+        path: "/home/bob/create-file"
+      register: creation_file
+      changed_when: false
+      failed_when: false
+
+    - name: Ensure new file was created
+      fail:
+        msg: "A new file was not created!"
+      when: not creation_file.stat.exists
+
+    - name: Lookup removal file
+      stat:
+        path: "/home/bob/remove-file"
+      register: removal_file
+      changed_when: false
+      failed_when: false
+
+    - name: Ensure file was removed
+      fail:
+        msg: "File was not removed!"
+      when: removal_file.stat.exists
+
+    - name: Lookup mode modification file
+      stat:
+        path: "/home/bob/modify-mode-file"
+      register: mode_modification_file
+      changed_when: false
+      failed_when: false
+
+    - name: Ensure mode modification file exists
+      fail:
+        msg: "No mode modification file was found!"
+      when: not mode_modification_file.stat.exists
+
+    - name: Ensure file mode has been changed
+      fail:
+        msg: "Testing file's mode was not modified!"
+      when: mode_modification_file.stat.mode != "0600"
+
+    - name: Lookup copied file
+      stat:
+        path: "/home/bob/copy-file"
+      register: copied_file
+      changed_when: false
+      failed_when: false
+
+    - name: Ensure file was copied
+      fail:
+        msg: "File was not copied over!"
+      when: not copied_file.stat.exists
+
+    - name: Find backup file
+      find:
+        paths: /home/bob/
+        patterns: "backup-file.*@*~"
+      register: backup_files
+
+    - name: Ensure file was backed up
+      fail:
+        msg: "File was not backed up!"
+      when: backup_files.matched == 0
+
+    - name: Lookup overwrite file
+      stat:
+        path: "/home/bob/overwrite-file"
+      register: overwrite_file
+      changed_when: false
+      failed_when: false
+
+    - name: Ensure overwrite file exists
+      fail:
+        msg: "Overwrite file does not exist!"
+      when: not overwrite_file.stat.exists
+
+    - name: Lookup overwrite file contents
+      lineinfile:
+        path: "/home/bob/overwrite-file"
+        line: "This is an overwrite file"
+        state: present
+      check_mode: true
+      register: overwrite_file_contents
+      changed_when: false
+
+    - name: Ensure file was overwritten
+      fail:
+        msg: "Overwrite file was not changed!"
+      when: overwrite_file_contents.changed

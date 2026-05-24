@@ -8,12 +8,22 @@
     force: "{{ file.force | default(false) }}"
     backup: "{{ file.backup | default(false) }}"
   when:
-    - file.remove is undefined or not file.remove 
+    - file.remove is undefined or not file.remove
+    - file.source is defined
 
-- name: "identities | files | remove file"
+- name: "identities | files | stat file"
+  ansible.builtin.stat:
+    path: "{{ path_prefix }}{{ file.path }}"
+  register: file_stats
+  when:
+    - file.source is undefined
+
+- name: "identities | files | modify file"
   ansible.builtin.file:
     path: "{{ path_prefix }}{{ file.path }}"
-    state: absent
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+    mode: "{{ file.mode | default('0644') }}"
+    state : "{{ 'absent' if (file.remove is defined and file.remove) else 'file' if (file_stats.stat.exists) else 'touch' }}"
   when:
-    - file.remove is defined
-    - file.remove
+    - file.source is undefined
