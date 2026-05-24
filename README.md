@@ -43,7 +43,7 @@ identities:
           recurse: bool   Indicates if the path operation should be recursively done. Default false.
           mode: string    The access control to set on the directory. Default '0755'.
       files:
-        - source: string  [required] The path to the source file to copy over.
+        - source: string  The path to the source file to copy over. If missing, then a file modification operation will be performed instead.
           path: string    [required] The path in relation to the user's home directory to where the file should be copied to
           remove: bool    Indicates if the path should be removed
           force: bool     Indicates if the path should be forcefully modified if it already exists. Default false.
@@ -118,9 +118,16 @@ identities:
         - path: 'flora/mistletoe'
           remove: true
       files:
+        # Copies over all files inside the /files/recipes/fish dir to the remote /home/freyja/recipes dir
         - source: "recipes/fish/"
           path: "recipes"
           mode: "0777"
+        # Makes the prophecy only accessible to Freyja
+        - path: "prophecy"
+          mode: "0700"
+        # Removes the file 'golden-tears'
+        - path: "golden-tears"
+          remove: true
       templates:
         - source: "templates/magic/spells/love-potion.j2"
           path: ".spells/love-potion"
