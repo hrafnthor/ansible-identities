@@ -1,0 +1,50 @@
+- name: Prepare
+  hosts: all
+  become: true
+  gather_facts: true
+  pre_tasks:
+    - name: Create test user
+      ansible.builtin.user:
+        name: bob
+        state: present
+        create_home: yes
+        shell: /bin/bash
+        groups: []
+        append: no
+
+    - name: Create modify mode file
+      ansible.builtin.file:
+        path: "/home/bob/modify-mode-file"
+        owner: bob
+        group: bob
+        mode: 0644
+        state: touch
+
+    - name: Create removal file
+      ansible.builtin.file:
+        path: "/home/bob/remove-file"
+        owner: bob
+        group: bob
+        mode: 0644
+        state: touch
+
+    - name: Create backup file
+      ansible.builtin.file:
+        path: "/home/bob/backup-file"
+        owner: bob
+        group: bob
+        mode: 0644
+        state: touch
+
+    - name: Create overwrite file
+      ansible.builtin.file:
+        path: "/home/bob/overwrite-file"
+        owner: bob
+        group: bob
+        mode: 0644
+        state: touch
+
+    - name: Add content to overwrite file
+      ansible.builtin.lineinfile:
+        path: "/home/bob/overwrite-file"
+        line: "This is original file"

@@ -1,0 +1,28 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+  - role: hth.identities
+    vars:
+      identities:
+        users:
+          - id: 1234
+            name: bob
+            home:
+              state: present
+              files:
+                - source: "copy-file"
+                  path: "copy-file"
+                - source: "copy-file"
+                  path: "backup-file"
+                  backup: true
+                  force: true
+                - source: "copy-file"
+                  path: "overwrite-file"
+                - path: "modify-mode-file"
+                  mode: "0600"
+                - path: "create-file"
+                - path: "remove-file"
+                  remove: true
