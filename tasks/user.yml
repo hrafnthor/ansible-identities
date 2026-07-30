@@ -133,28 +133,15 @@
     - user.ssh is defined
     - user.ssh.authorized_keys is defined
 
-- block:
-    - ansible.builtin.include_tasks: files.yml
-      loop: "{{ user.home.files }}"
-      loop_control:
-        loop_var: "file"
+- name: "HTH | Identities | Users | Create home dir files"
+  ansible.builtin.include_tasks: files/main.yml
+  loop: "{{ user.home.files }}"
+  loop_control:
+    loop_var: "file"
   vars:
-      path_prefix: "/home/{{ user.name }}/"
-      owner: "{{ user.name }}"
-      group: "{{ user.group.name | default(user.name) }}"
+      file_path_prefix: "/home/{{ user.name }}/"
+      file_owner: "{{ user.name }}"
+      file_group: "{{ user.group.name | default(user.name) }}"
   when:
     - user.home is defined
     - user.home.files is defined
-
-- block:
-    - ansible.builtin.include_tasks: templates.yml
-      loop: "{{ user.home.templates }}"
-      loop_control:
-          loop_var: "template"
-  vars:
-      path_prefix: "/home/{{ user.name }}/"
-      owner: "{{ user.name }}"
-      group: "{{ user.group.name | default(user.name) }}"
-  when:
-    - user.home is defined
-    - user.home.templates is defined

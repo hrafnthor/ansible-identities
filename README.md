@@ -43,18 +43,14 @@ identities:
           recurse: bool   Indicates if the path operation should be recursively done. Default false.
           mode: string    The access control to set on the directory. Default '0755'.
       files:
-        - source: string  The path to the source file to copy over. If missing, then a file modification operation will be performed instead.
+        - source: string  The path to the source file to use. If missing, then only file modification operation will be performed.
           path: string    [required] The path in relation to the user's home directory to where the file should be copied to
           remove: bool    Indicates if the path should be removed
           force: bool     Indicates if the path should be forcefully modified if it already exists. Default false.
           backup: bool    Indicates if any current file at the same [path] should be backed up in place. Default false.
           mode: string    The access control to set on the file. Default '0744'.
-      templates:
-        - source: string  [required] The path to the source template.
-          path: string    [required] The path in relation to the user's home directory to where the template file should be created.
-          force: bool     Indicates if the path should be forcefully modified if it already exists. Default false.
-          backup: bool    Indicates if any current file at the same [path] should be backed up in place. Default false.
-          mode: string    The access control to set on the file. Default '0744'.
+          type: enum      [required] Indicates if the file operation is 'copy' or 'template'.
+          vars: object     Only used if the [type] is 'template'. Contains name/value pairs to use in the templating operation.
     state: [
        absent,        <will remove the user, group, home dir, sudoer file and ssh keys>
        present        <will create the user if not already present - DEFAULT choice>
@@ -121,17 +117,21 @@ identities:
         # Copies over all files inside the /files/recipes/fish dir to the remote /home/freyja/recipes dir
         - source: "recipes/fish/"
           path: "recipes"
+          type: "copy"
           mode: "0777"
         # Makes the prophecy only accessible to Freyja
         - path: "prophecy"
+          type: "copy"
           mode: "0700"
         # Removes the file 'golden-tears'
         - path: "golden-tears"
+          type: "copy"
           remove: true
-      templates:
-        - source: "templates/magic/spells/love-potion.j2"
+        # Creates a template file using the supplied variables
+        - source: "/magic/spells/love-potion.j2"
           path: ".spells/love-potion"
           mode: "0700"
+          type: "template"
           vars:
             key_ingredient: "blood of inocents"
     sudoer:

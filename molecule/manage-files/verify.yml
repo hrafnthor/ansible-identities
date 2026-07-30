@@ -92,3 +92,41 @@
       fail:
         msg: "Overwrite file was not changed!"
       when: overwrite_file_contents.changed
+
+    - name: Lookup new template file creation
+      stat:
+        path: "/home/bob/templated-file.yml"
+      register: templated_file
+      changed_when: false
+      failed_when: false
+
+    - name: Ensure new templated file was created
+      fail:
+        msg: "A new templated file was not created!"
+      when: not templated_file.stat.exists
+
+    - name: Read in the templated file
+      ansible.builtin.slurp:
+        src: "{{ templated_file.stat.path }}"
+      register: templated_file_contents
+
+    - name: Extract templated field in templated file
+      ansible.builtin.set_fact:
+        templated_field: "{{ (templated_file_contents.content | b64decode | from_yaml).object.field }}"
+
+    - name: Ensure templated field matches expected value
+      fail:
+        msg: "Templated field in templated file differed from expected!"
+      when: templated_field != "some value"
+
+    - name: Lookup previous template file
+      stat:
+        path: "/home/bob/remove-template-file"
+      register: previously_templated_file
+      changed_when: false
+      failed_when: false
+
+    - name: Ensure previously templated file was removed
+      fail:
+        msg: "A previously templated file was not removed!"
+      when: previously_templated_file.stat.exists

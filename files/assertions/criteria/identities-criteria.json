@@ -196,10 +196,6 @@
                                         {
                                             "ref": "#/definitions/non-empty-string"
                                         },
-                                        "remove":
-                                        {
-                                            "type": "boolean"
-                                        },
                                         "force":
                                         {
                                             "type": "boolean"
@@ -211,41 +207,15 @@
                                         "mode":
                                         {
                                             "ref": "#/definitions/non-empty-string"
-                                        }
-                                    },
-                                    "required":
-                                    [
-                                        "path"
-                                    ]
-                                }
-                            },
-                            "templates":
-                            {
-                                "type": "array",
-                                "items":
-                                {
-                                    "type": "object",
-                                    "properties":
-                                    {
-                                        "source":
-                                        {
-                                            "ref": "#/definitions/non-empty-string"
                                         },
-                                        "path":
+                                        "type":
                                         {
-                                            "ref": "#/definitions/non-empty-string"
-                                        },
-                                        "force":
-                                        {
-                                            "type": "boolean"
-                                        },
-                                        "backup":
-                                        {
-                                            "type": "boolean"
-                                        },
-                                        "mode":
-                                        {
-                                            "ref": "#/definitions/non-empty-string"
+                                            "type": "string",
+                                            "enum":
+                                            [
+                                                "copy",
+                                                "template"
+                                            ]
                                         },
                                         "vars":
                                         {
@@ -261,13 +231,13 @@
                                             }
                                         }
                                     },
-                                    "oneOf":
+                                    "anyOf":
                                     [
                                         {
                                             "required":
                                             [
-                                                "source",
-                                                "path"
+                                                "path",
+                                                "type"
                                             ]
                                         },
                                         {

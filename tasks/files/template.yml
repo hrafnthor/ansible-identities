@@ -1,0 +1,20 @@
+- name: "HTH | Identities | Templates | Set template variables"
+  ansible.builtin.set_fact:
+    "{{ entry.key }}": "{{ entry.value }}"
+  loop: "{{ file.vars | default({}) | dict2items }}"
+  loop_control:
+    loop_var: entry
+  when:
+    - file.vars is defined
+
+- name: "HTH | Identities | Templates | Template file"
+  ansible.builtin.template:
+    src: "{{ file.source }}"
+    dest: "{{ file_path }}"
+    owner: "{{ file_owner }}"
+    group: "{{ file_group }}"
+    mode: "{{ file_mode }}"
+    force: "{{ file_force }}"
+    backup: "{{ file_backup }}"
+  when:
+    - file.source is defined
