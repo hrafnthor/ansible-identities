@@ -1,0 +1,46 @@
+- name: "HTH | Identities | Files | Set file destination"
+  ansible.builtin.set_fact:
+    file_path: "{{ file_path_prefix }}{{ file.path }}"
+
+- name: "HTH | Identities | Files | Set file removal"
+  ansible.builtin.set_fact:
+    file_remove: "{{ file.remove | default(false) }}"
+
+- name: "HTH | Identities | Files | Set file mode"
+  ansible.builtin.set_fact:
+    file_mode: "{{ file.mode | default('0644') }}"
+
+- name: "HTH | Identities | Files | Set file force"
+  ansible.builtin.set_fact:
+    file_force: "{{ file.force | default(false) }}"
+
+- name: "HTH | Identities | Files | Set file backup"
+  ansible.builtin.set_fact:
+    file_backup: "{{ file.backup | default(false) }}"
+
+- name: "HTH | Identities | Files | Copy file"
+  ansible.builtin.include_tasks: copy.yml
+  when:
+    - file.type is defined
+    - file.type == 'copy'
+    - file.source is defined
+    - file.remove is undefined or not file.remove
+
+- name: "HTH | Identities | Files | Template file"
+  ansible.builtin.include_tasks: template.yml
+  when:
+    - file.type is defined
+    - file.type == 'template'
+    - file.source is defined
+    - file.remove is undefined or not file.remove
+
+- name: "HTH | Identities | Files | Write content to file"
+  ansible.builtin.include_tasks: variable.yml
+  when:
+    - file.type is defined
+    - file.type == 'value' or file.type == 'variable'
+    - file.source is defined
+    - file.remove is undefined or not file.remove
+
+- name: "HTH | Identities | Manage file"
+  ansible.builtin.include_tasks: manage.yml

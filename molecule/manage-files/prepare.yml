@@ -48,3 +48,11 @@
       ansible.builtin.lineinfile:
         path: "/home/bob/overwrite-file"
         line: "This is original file"
+
+    - name: Create previously templated file
+      ansible.builtin.file:
+        path: "/home/bob/remove-template-file"
+        owner: bob
+        group: bob
+        mode: 0644
+        state: touch

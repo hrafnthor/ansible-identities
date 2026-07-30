@@ -92,3 +92,93 @@
       fail:
         msg: "Overwrite file was not changed!"
       when: overwrite_file_contents.changed
+
+    - name: Lookup new template file creation
+      stat:
+        path: "/home/bob/templated-file.yml"
+      register: templated_file
+      changed_when: false
+      failed_when: false
+
+    - name: Ensure new templated file was created
+      fail:
+        msg: "A new templated file was not created!"
+      when: not templated_file.stat.exists
+
+    - name: Read in the templated file
+      ansible.builtin.slurp:
+        src: "{{ templated_file.stat.path }}"
+      register: templated_file_contents
+
+    - name: Extract templated field in templated file
+      ansible.builtin.set_fact:
+        templated_field: "{{ (templated_file_contents.content | b64decode | from_yaml).object.field }}"
+
+    - name: Ensure templated field matches expected value
+      fail:
+        msg: "Templated field in templated file differed from expected!"
+      when: templated_field != "some value"
+
+    - name: Lookup previous template file
+      stat:
+        path: "/home/bob/remove-template-file"
+      register: previously_templated_file
+      changed_when: false
+      failed_when: false
+
+    - name: Ensure previously templated file was removed
+      fail:
+        msg: "A previously templated file was not removed!"
+      when: previously_templated_file.stat.exists
+
+    - name: Lookup new value file
+      stat:
+        path: "/home/bob/value-file"
+      register: value_file
+      changed_when: false
+      failed_when: false
+
+    - name: Ensure value file was created
+      fail:
+        msg: "Value file was not found!"
+      when: not value_file.stat.exists
+
+    - name: Read value file contents
+      ansible.builtin.slurp:
+        src: "{{ value_file.stat.path }}"
+      register: value_file_contents
+
+    - name: Validate value file contents match expected values
+      ansible.builtin.set_fact:
+        value_file_content_match: "{{ (value_file_contents.content | b64decode | trim) == 'This is the value content' }}"
+
+    - name: Ensure value file contents matched expected values
+      fail:
+        msg: "Contents of value file differed from expected!"
+      when: not value_file_content_match
+
+    - name: Lookup new variable file
+      stat:
+        path: "/home/bob/variable-file"
+      register: variable_file
+      changed_when: false
+      failed_when: false
+
+    - name: Ensure variable file was created
+      fail:
+        msg: "Variable file was not found!"
+      when: not variable_file.stat.exists
+
+    - name: Read variable file contents
+      ansible.builtin.slurp:
+        src: "{{ variable_file.stat.path }}"
+      register: variable_file_content
+
+    - name: Validate variable file contents match expected values
+      ansible.builtin.set_fact:
+        variable_file_content_match: "{{ (variable_file_content.content | b64decode | trim) == 'This is the variable content' }}"
+
+    - name: Ensure variable file contents matched expected values
+      fail:
+        msg: "Contents of variable file differed from expected!"
+      when: not variable_file_content_match
