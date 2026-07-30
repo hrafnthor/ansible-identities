@@ -1,6 +1,4 @@
-# This file contains tasks related to modifying the root user
-
-- name: "identities | root | disable root login"
+- name: "HTH | Identities | Root | Disable root login"
   become: true
   ansible.builtin.user:
     shell: /usr/sbin/nologin

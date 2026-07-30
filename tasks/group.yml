@@ -4,7 +4,7 @@
 # It expects to be iterated over with a input variable named 'group'
 # -----------------------------------------------------------------------------
 
-- name: "identities | groups | manage group"
+- name: "HTH | Identities | Groups | Manage group"
   ansible.builtin.group:
     name: "{{ group.name }}"
     gid: "{{ group.id | default(omit) }}"
