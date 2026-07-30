@@ -6,6 +6,7 @@
   roles:
   - role: hth.identities
     vars:
+      variable_file_content: "This is the variable content"
       identities:
         users:
           - id: 1234
@@ -40,3 +41,9 @@
                 - path: "remove-template-file"
                   type: template
                   remove: true
+                - path: "value-file"
+                  type: value
+                  source: "This is the value content"
+                - path: "variable-file"
+                  type: variable
+                  source: "variable_file_content"

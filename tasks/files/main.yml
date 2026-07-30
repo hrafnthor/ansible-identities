@@ -23,12 +23,24 @@
   when:
     - file.type is defined
     - file.type == 'copy'
+    - file.source is defined
+    - file.remove is undefined or not file.remove
 
 - name: "HTH | Identities | Files | Template file"
   ansible.builtin.include_tasks: template.yml
   when:
     - file.type is defined
     - file.type == 'template'
+    - file.source is defined
+    - file.remove is undefined or not file.remove
+
+- name: "HTH | Identities | Files | Write content to file"
+  ansible.builtin.include_tasks: variable.yml
+  when:
+    - file.type is defined
+    - file.type == 'value' or file.type == 'variable'
+    - file.source is defined
+    - file.remove is undefined or not file.remove
 
 - name: "HTH | Identities | Manage file"
   ansible.builtin.include_tasks: manage.yml

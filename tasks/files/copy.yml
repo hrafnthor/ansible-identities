@@ -7,6 +7,3 @@
     mode: "{{ file_mode }}"
     force: "{{ file_force }}"
     backup: "{{ file_backup }}"
-  when:
-    - file.remove is undefined or not file.remove
-    - file.source is defined
